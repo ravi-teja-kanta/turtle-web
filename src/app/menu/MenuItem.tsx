@@ -18,24 +18,6 @@ export default function MenuItem(props: MenuItemProps) {
 
     return (
         <div className="flex border px-2 py-4 justify-between shadow rounded-md space-x-2">
-            <div className="flex flex-col w-1/2">
-                <div className="text-gray-600 flex flex-wrap">{props.name}</div>
-                <div>{ toINR(props.cost) }</div>
-                {
-                    quantity === 0 ?
-                    <div className="flex justify-center mt-4 p-1 rounded-md text-center w-3/4 border-2 bg-green-700 text-white" onClick={()=>{setQuantity(1); props.add(props.id)}}>
-                        <div className="">add</div>
-                    </div>:
-                    <div className="flex rounded-md text-center mt-4 p-1 w-3/4 border-2 justify-between">
-                        <div className="my-auto bg-green-700 text-white rounded-l" onClick={() => {setQuantity(quantity + 1); props.add(props.id)}}><PlusIcon className="w-6 h-6 p-1" /></div>
-                        <div className="my-auto px-2">{quantity}</div>
-                        <div className="my-auto bg-green-700 text-white rounded-r" onClick={() => {setQuantity(quantity - 1); props.remove(props.id)}}><MinusIcon className="w-6 h-6 p-1" /></div>
-                    </div>
-                }
-                {/* <div className="rounded-md mt-4 px-6 py-1 text-center w-fit border-2 bg-green-700 text-white">
-                    add
-                </div> */}
-            </div>
             <div className="rounded-md flex">
                 <Image
                     src={props.image}
@@ -48,6 +30,21 @@ export default function MenuItem(props: MenuItemProps) {
                         }
                     }
                 />
+            </div>
+            <div className="flex flex-col w-1/2">
+                <div className="text-gray-600 flex flex-wrap text-sm">{props.name}</div>
+                <div className="font-semibold mt-1 text-sm">{ toINR(props.cost) }</div>
+                {
+                    quantity === 0 ?
+                    <div className="flex justify-center mt-4 ml-auto p-1 rounded-md text-center w-3/4 border-2 bg-green-700 text-white" onClick={()=>{setQuantity(1); props.add(props.id)}}>
+                        <div className="">add</div>
+                    </div>:
+                    <div className="flex rounded-md text-center mt-4 p-1 w-3/4 border-2 justify-between ml-auto">
+                        <div className="my-auto bg-green-700 text-white rounded-l" onClick={() => {setQuantity(quantity - 1); props.remove(props.id)}}><MinusIcon className="w-6 h-6 p-1" /></div>
+                        <div className="my-auto px-2">{quantity}</div>
+                        <div className="my-auto bg-green-700 text-white rounded-r" onClick={() => {setQuantity(quantity + 1); props.add(props.id)}}><PlusIcon className="w-6 h-6 p-1" /></div>
+                    </div>
+                }
             </div>
         </div>
     )
