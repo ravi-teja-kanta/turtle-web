@@ -5,12 +5,15 @@ import Image from "next/image";
 import MenuItem from "./MenuItem";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 
 export default function MenuPage() {
+    const router = useRouter();
     const [checkoutList, setCheckoutList] = useState<{[id: string]: number}>({});
     const [count, setCount] = useState<number>();
     
+
     useEffect(() => {
         setCount(Object.keys(checkoutList).filter(k => checkoutList[k]!==0).length);
     }, [checkoutList])
@@ -48,7 +51,7 @@ export default function MenuPage() {
                     <div className="text-sm my-auto">
                         {count} items selected
                     </div>
-                    <div className="flex rounded-md w-1/2 my-auto py-2 border-2 bg-green-700 text-white justify-center font-bold">
+                    <div className="flex rounded-md w-1/2 my-auto py-2 border-2 bg-green-700 text-white justify-center font-bold" onClick={() => {router.push("/restaurant/checkout")}}>
                         next
                         <ArrowRightIcon className="w-5 h-4 my-auto ml-1 font-bold" />
                     </div>

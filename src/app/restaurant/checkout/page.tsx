@@ -141,11 +141,11 @@ export default function CheckoutPage(props: CheckoutProps) {
                             <div className="flex flex-col space-y-2">
                                 <div className="font-semibold">Add New Address</div>
                                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-2">
-                                    <input placeholder="Name of the receiver" {...register("line1")} required className="border w-full p-2 p rounded" type={"text"} />
+                                    <input placeholder="Name of the receiver" {...register("name")} required className="border w-full p-2 p rounded" type={"text"} />
                                     <input placeholder="House / Flat / Floor No." {...register("line1")} required className="border w-full p-2 p rounded" type={"text"} />
                                     <input placeholder="Apartment / Area / Road" {...register("line2")} required className="border w-full p-2 p rounded" type={"text"} />
                                     <div className="flex space-x-2">
-                                        <input placeholder="Pincode" {...register("pincode")} required className="border w-full p-2 p rounded" type={"text"} />
+                                        <input placeholder="Pincode" {...register("pincode")} required className="border w-full p-2 p rounded" type={"number"} />
                                         <input placeholder="City" {...register("city")} required className="border w-full p-2 p rounded" type={"text"} />
                                     </div>
                                     <button type={"submit"}  className="flex space-x-2 border py-2 text-white bg-green-700 justify-center rounded">
