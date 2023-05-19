@@ -8,21 +8,21 @@ import { useEffect, useState } from "react";
 
 
 export default function MenuPage() {
-    const [list, setList] = useState<{[id: string]: number}>({});
+    const [checkoutList, setCheckoutList] = useState<{[id: string]: number}>({});
     const [count, setCount] = useState<number>();
     
     useEffect(() => {
-        setCount(Object.keys(list).filter(k => list[k]!==0).length);
-    }, [list])
+        setCount(Object.keys(checkoutList).filter(k => checkoutList[k]!==0).length);
+    }, [checkoutList])
 
     function addItem(id: string) {
-        setList((list) => {
+        setCheckoutList((list) => {
             list[id] = (list[id] || 0) + 1;
             return {...list}
         })
     }
     function removeItem(id: string) {
-        setList((list) => {
+        setCheckoutList((list) => {
             list[id] = (list[id] || 0) - 1;
             return {...list}
         })
