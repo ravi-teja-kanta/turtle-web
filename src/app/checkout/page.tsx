@@ -1,7 +1,8 @@
 'use client';
 
 import { toINR } from "@/utils/currency"
-import { ArrowLeftIcon, CircleStackIcon, HomeIcon, HomeModernIcon, MapPinIcon, MinusIcon, PlusIcon, StopCircleIcon } from "@heroicons/react/24/solid"
+import { ArrowLeftIcon, ChevronDownIcon, CircleStackIcon, HomeIcon, HomeModernIcon, MapPinIcon, MinusIcon, PlusIcon, StopCircleIcon } from "@heroicons/react/24/solid"
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form"
 type CheckoutProps = {
@@ -23,12 +24,11 @@ type DeliveryDetails = {
     address: Address
 }
 
-function a() {
 
-}
 export default function CheckoutPage(props: CheckoutProps) {
     const [showNewAddressModal, setShowNewAddressModal] = useState(false);
-    const [hasSelectedAddress, setHasSelectedAddress] = useState(false);
+    const [hasSelectedAddress, setHasSelectedAddress] = useState(true);
+    const router = useRouter();
 
     const {handleSubmit, register} = useForm()
     
@@ -40,36 +40,39 @@ export default function CheckoutPage(props: CheckoutProps) {
 
     return (
         <div className="flex flex-col space-y-2">
-            <div className="flex space-x-4 pb-2">
+            <div className="flex space-x-4 pb-2" onClick={() => router.back()}>
                 <ArrowLeftIcon className="w-6 h-6 text-gray-500" />
                 <div className=" font-semibold">Mayabazaar Restaurant</div>
             </div>
-            <div className="border flex flex-col rounded-lg p-4 space-y-4">
+            <div className="border flex flex-col rounded-lg space-y-4 p-4">
+                
                 {/* <div className="font-semibold border-b border-dotted py-1">Cart</div> */}
                 <div className="flex justify-between">
                     {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-red-700"/></div> */}
                     <div className="w-2/3 text-left my-auto text-sm">Chicken Boneless Biriyani paneer Nanana</div>
+                    <div className="w-1/4 text-center text-gray-400 text-sm">{"x 2"}</div>
+                    <div className="w-1/4 text-right">{toINR(359)}</div>
+                </div>
+                <div className="flex justify-between">
+                    {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-red-700"/></div> */}
+                    <div className="w-2/3 text-left my-auto text-sm">Chicken Boneless Biriyani paneer Nanana</div>
+                    <div className="w-1/4 text-center text-gray-400 text-sm">{"x 2"}</div>
+                    <div className="w-1/4 text-right">{toINR(359)}</div>
+                </div>
+                <div className="flex justify-between">
+                    {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-red-700"/></div> */}
+                    <div className="w-2/3 text-left my-auto text-sm">Chicken Boneless Biriyani paneer Nanana</div>
+                    <div className="w-1/4 text-center text-gray-400 text-sm">{"x 2"}</div>
+                    <div className="w-1/4 text-right">{toINR(359)}</div>
+                </div>
+                <div className="flex justify-between">
+                    {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-red-700"/></div> */}
+                    <div className="w-2/3 text-left my-auto text-sm">Chicken 65</div>
                     <div className="w-1/4 text-center text-gray-400 text-sm my-auto">{"x 2"}</div>
                     <div className="w-1/4 text-right my-auto">{toINR(359)}</div>
                 </div>
-                <div className="flex justify-between">
-                    {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-green-700"/></div> */}
-                    <div className="w-2/3 text-left my-auto text-sm">Chicken Boneless Biriyani</div>
-                    <div className="w-1/4 text-center text-gray-400 text-sm my-auto">x2</div>
-                    <div className="w-1/4 text-right my-auto">{toINR(359)}</div>
-                </div>
-                <div className="flex justify-between">
-                    {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-green-700"/></div> */}
-                    <div className="w-2/3 text-left my-auto text-sm">Chicken Boneless Biriyani</div>
-                    <div className="w-1/4 text-center text-gray-400 text-sm my-auto">x2</div>
-                    <div className="w-1/4 text-right my-auto">{toINR(359)}</div>
-                </div>
-                <div className="flex justify-between">
-                    {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-green-700"/></div> */}
-                    <div className="w-2/3 text-left my-auto text-sm">Chicken Boneless Biriyani</div>
-                    <div className="w-1/4 text-center text-gray-400 text-sm my-auto">x2</div>
-                    <div className="w-1/4 text-right my-auto">{toINR(359)}</div>
-                </div>
+               
+               
                 
                 
             </div>
@@ -100,16 +103,15 @@ export default function CheckoutPage(props: CheckoutProps) {
                     </div>
                 </div>
             </div>
-            
             {
                 hasSelectedAddress ?
-                <div className="flex flex-col z-10 fixed bottom-0 left-0 w-full px-4 py-2">
+                <div className="flex flex-col z-10 fixed bg-white bottom-0 left-0 w-full px-4 py-2">
                     <div className="flex border-t py-2 justify-between space-x-4">
                         <div className="flex flex-col">
                             <div className="text-xs font-semibold">Delivering To</div>
                             <div className=" text-gray-500 text-xs">Ravi, 32/1 Ganesh Street, anakapalli aprtments, somajiguda</div>
                         </div>
-                        <div className="my-auto border p-1 rounded-lg text-xs text-green-700 border-green-700" onClick={() => {setShowNewAddressModal(true)}}>
+                        <div className="border my-auto px-2 rounded-lg text-xs text-green-700 border-green-700" onClick={() => {setShowNewAddressModal(true)}}>
                             change
                         </div>
                     </div>
@@ -117,7 +119,7 @@ export default function CheckoutPage(props: CheckoutProps) {
                         <div className="flex flex-col border-dotted  my-auto">
                             <div className="text-xs text-gray-600">Final Amount</div>
                             <div className="font-semibold text-xl">
-                                {toINR(1765)}
+                                {toINR(1766)}
                             </div>
                         </div>
                         <div className=" w-1/2 py-2 text-center rounded font-semibold bg-green-700 text-white my-auto">
@@ -156,7 +158,7 @@ export default function CheckoutPage(props: CheckoutProps) {
                         </div>
                 </div>
             }
-            
+            <div className="py-16"></div>
             
         </div>
     )
