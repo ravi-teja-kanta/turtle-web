@@ -36,13 +36,15 @@ export default function MenuPage() {
     return (
         <div className="flex flex-col m-4 p-2">
             <div className="flex flex-col text-center space-y-2 px-6">
-                <div className=" text-2xl font-bold text-gray-600 flex flex-wrap justify-center">Mayabazaar Restaurant</div>
+                <div className=" text-2xl font-bold text-gray-600 flex flex-wrap justify-center">Behroz Biryani</div>
                 <div className="text-xs gray-400">4.1 Stars on Zomato</div>
             </div>
             <div className="flex flex-col mt-4 space-y-4 mb-10">
                 <MenuItem id={"34"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Lazeez Bhuna Murgh (Chicken Dum Biryani Boneless - Serves 1)" cost={385} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/htra1ceo32gospqkqalp"} />
                 <MenuItem id={"56"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Dum Gosht (Mutton Dum Biryani - Boneless - Serves 1)" cost={535} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/ocaq0qjsau8no0pnn4dl"} />
+                <MenuItem id={"78"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Raan-E-Murgh Biryani (Chicken Whole Leg Biryani) (Serves 1)" cost={459} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/caeef7009cc017a14a4ab2f6083af7d8"} />
                 <MenuItem id={"78"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Murgh Malai Kebab (6 Pcs)" cost={399} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/ef356baf40a5ae847f779f28d5b97a3d"} />
+                <MenuItem id={"78"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Gosht-e-Haleem (Mutton Haleem- Serves 2)" cost={549} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/433f058364653f9323670ae157547031"} />
             </div>
             {
                 count !== 0 &&

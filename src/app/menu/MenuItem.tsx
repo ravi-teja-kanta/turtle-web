@@ -23,7 +23,7 @@ export default function MenuItem(props: MenuItemProps) {
                     src={props.image}
                     alt={""}
                     width={150}
-                    height={150}
+                    height={120}
                     style={
                         {
                             borderRadius: '5%'
