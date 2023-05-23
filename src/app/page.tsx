@@ -1,30 +1,47 @@
 'use client';
 
-import MenuItem from "./menu/MenuItem";
+import MenuItemComponent from "./menu/MenuItem";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import useLocalStorage from "@/utils/useLocalStorage";
+import { CartSummaryItemProps } from "./checkout/page";
+import { MenuItem, MayabazaarMenu } from "@/constants/mayabazaarMenu";
 
 
 export default function MenuPage() {
     const router = useRouter();
-    const [checkoutList, setCheckoutList] = useState<{[id: string]: number}>({});
-    const [count, setCount] = useState<number>();
+    const [count, setCount] = useState<number>(0);
+    const [cart, setCart] = useLocalStorage<CartSummaryItemProps[]>("cart", []);
+
 
     useEffect(() => {
-        setCount(Object.keys(checkoutList).filter(k => checkoutList[k]!==0).length);
-    }, [checkoutList])
+        setCount(cart.filter(i => i.quantity !== 0).length);
+    }, [cart])
 
     function addItem(id: string) {
-        setCheckoutList((list) => {
-            list[id] = (list[id] || 0) + 1;
-            return {...list}
+        
+        setCart((cart) => {
+            let updatedCartItem = cart.filter(i => i.id === id).pop();
+            if(!updatedCartItem || updatedCartItem.quantity === 0) {
+                let menuItem = MayabazaarMenu.filter(mi => mi.id === id).pop();
+                if(!menuItem) throw Error("Item does not exist in menu");
+                updatedCartItem = {
+                    id,
+                    name: menuItem.name,
+                    cost: menuItem.currentPrice,
+                    quantity: 1
+                }
+            } else updatedCartItem.quantity = updatedCartItem.quantity + 1;
+            return  [updatedCartItem, ...cart.filter(i => i.id != id) ]
         })
     }
     function removeItem(id: string) {
-        setCheckoutList((list) => {
-            list[id] = (list[id] || 0) - 1;
-            return {...list}
+        setCart((cart) => {
+            let updatedCartItem = cart.filter(i => i.id === id).pop();
+            if(!updatedCartItem || updatedCartItem.quantity===0) throw Error("Trying to remove item which doesnt exist");
+            updatedCartItem.quantity = updatedCartItem.quantity - 1;
+            return  [updatedCartItem, ...cart.filter(i => i.id != id) ]
         })
     }
 
@@ -40,11 +57,12 @@ export default function MenuPage() {
                 <div className="text-xs gray-400">4.1 Stars on Zomato</div>
             </div>
             <div className="flex flex-col mt-4 space-y-4 mb-10">
-                <MenuItem id={"34"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Lazeez Bhuna Murgh (Chicken Dum Biryani Boneless - Serves 1)" cost={385} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/htra1ceo32gospqkqalp"} />
-                <MenuItem id={"56"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Dum Gosht (Mutton Dum Biryani - Boneless - Serves 1)" cost={535} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/ocaq0qjsau8no0pnn4dl"} />
-                <MenuItem id={"78"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Raan-E-Murgh Biryani (Chicken Whole Leg Biryani) (Serves 1)" cost={459} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/caeef7009cc017a14a4ab2f6083af7d8"} />
-                <MenuItem id={"78"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Murgh Malai Kebab (6 Pcs)" cost={399} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/ef356baf40a5ae847f779f28d5b97a3d"} />
-                <MenuItem id={"78"} add={(id) => addItem(id)} remove={(id) => removeItem(id)} name="Gosht-e-Haleem (Mutton Haleem- Serves 2)" cost={549} image={"https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_1024/433f058364653f9323670ae157547031"} />
+                {
+                    MayabazaarMenu.map((i) => {
+                        let itemInLocal = cart.filter(it => it.id === i.id).pop();
+                        return <MenuItemComponent key={i.id} {...i} add={(id) => addItem(id)} remove={(id) => removeItem(id)} quantity={itemInLocal?.quantity} />
+                    })
+                }
             </div>
             {
                 count !== 0 &&
@@ -61,4 +79,6 @@ export default function MenuPage() {
             
         </div>
     )
+
+    
 }
