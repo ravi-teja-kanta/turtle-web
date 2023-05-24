@@ -5,7 +5,6 @@ import useLocalStorage from "@/utils/useLocalStorage";
 import { ArrowLeftIcon, ChevronDownIcon, CircleStackIcon, HomeIcon, HomeModernIcon, MapPinIcon, MinusIcon, PlusIcon, StopCircleIcon } from "@heroicons/react/24/solid"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form"
 import BillDetails from "./BillDetails";
 import NewAddress from "./NewAddress";
 type CheckoutProps = {
@@ -64,7 +63,7 @@ export default function CheckoutPage(props: CheckoutProps) {
             </div>
             <div className="border flex flex-col rounded-lg space-y-4 p-4">
                 {
-                    cart.map(i => <CartSummaryItem key={i.id} {...i} />)
+                    cart.filter(i => i.quantity > 0).map(i => <CartSummaryItem key={i.id} {...i} />)
                 }
             </div>
             <BillDetails total={getCartTotal()} />
