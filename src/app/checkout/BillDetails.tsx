@@ -16,15 +16,21 @@ export default function BillDetails(props: BillDetailsProps) {
                 </div>
                 <div className="flex border-dotted space-x-2 justify-between">
                     <div className="text-sm text-gray-600">Deliver Charges</div>
-                    <div className="my-auto text-green-700 font-bold">
-                        FREE
+                    <div className="my-auto text-green-700">
+                        {toINR(0)}
                     </div>
+                    {/* <div className="my-auto text-green-700">
+                        FREE
+                    </div> */}
                 </div>
                 <div className="flex border-dotted space-x-2 justify-between">
                     <div className="text-sm text-gray-600">Packaging Charges</div>
-                    <div className="my-auto text-green-700 font-bold">
-                        FREE
+                    <div className="my-auto text-green-700">
+                        {toINR(0)}
                     </div>
+                    {/* <div className="my-auto text-green-700">
+                        FREE
+                    </div> */}
                 </div>
                 <div className="flex space-x-2 pt-2 border-t border-dotted justify-between">
                     <div className="text-sm font-semibold">To Pay</div>

@@ -6,7 +6,9 @@ import { ArrowLeftIcon, ChevronDownIcon, CircleStackIcon, HomeIcon, HomeModernIc
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import BillDetails from "./BillDetails";
-import NewAddress from "./NewAddress";
+import NewAddress, { getUserDetails } from "./NewAddress";
+import axios from "axios";
+
 type CheckoutProps = {
     
 }
@@ -16,18 +18,15 @@ export type LatLong = {
     geoLong: number
 }
 export type Address = {
-    nameOfReceiver: string,
-    phoneNumber: string
     line1: string,
     line2: string,
     latLong: LatLong,
     city: string,
     pincode: string
 }
-export type DeliveryDetails = {
+export type UserDetails = {
     phoneNumber: string,
     nameOfReceiver: string,
-    address: Address
 }
 
 export type CartSummaryItemProps = {
@@ -43,15 +42,38 @@ export default function CheckoutPage(props: CheckoutProps) {
     const [hasSelectedAddress, setHasSelectedAddress] = useState(false);
     const router = useRouter();
     const [address, setAddress] = useLocalStorage<Address | undefined>("address", undefined);
+    const [userDetails, setUserDetails] = useLocalStorage<UserDetails | undefined>("userDetails", undefined);
+    const [deliveryETA, setETA] = useState<number>();
+    const [cannotDeliver, setCannotDeliver] = useState<string | undefined>(undefined);
     const [cart, setCart] = useLocalStorage<CartSummaryItemProps[]>("cart", []);
     
+    useEffect(() => {
+        if (address) {
+            getQuoteFromDunzo(address)
+                .then((d) => {
+                    if (d.data.code) {
+                        setCannotDeliver(d.data.message)
+                    } else {
+                        setETA(d.data.eta.dropoff)
+                    }
+                })
+                .catch((e) => {
+
+                })
+        }
+    }, [address])
 
     
-    function postSubmit() {
+    function postSubmit(address: Address, userDetails: UserDetails) {
         setShowNewAddressModal(false);
         setHasSelectedAddress(true);
         // window.location.reload();
+
+        setAddress(address);
+        setUserDetails(userDetails);
     }
+
+    
 
     
     
@@ -68,28 +90,40 @@ export default function CheckoutPage(props: CheckoutProps) {
             </div>
             <BillDetails total={getCartTotal()} />
             {
-                address !== undefined ?
+                (address !== undefined && userDetails !== undefined) ?
                 <div className="flex flex-col z-10 fixed bg-white bottom-0 left-0 w-full px-4 py-2">
                     <div className="flex border-t py-2 justify-between space-x-4">
-                        <div className="flex flex-col">
-                            <div className="text-xs font-semibold">Delivering To</div>
-                            <div className=" text-gray-500 text-xs">{`${address.nameOfReceiver}, ${address.line1, address.line2}`}</div>
+                        <div className="flex flex-col space-y-1">
+                            {
+                                (!cannotDeliver)?
+                                <div className="flex">
+                                    <div className="text-sm text-green-700 font-semibold">{deliveryETA} mins</div>
+                                </div>
+                                :
+                                <div className="text-sm text-red-700 font-semibold">{cannotDeliver}</div>
+                            }
+                            
+                            <div className=" text-gray-500 text-xs">{`${userDetails.nameOfReceiver}, ${address.line1}, ${address.line2}`}</div>
                         </div>
                         <div className="border my-auto px-2 rounded-lg text-xs text-green-700 border-green-700" onClick={() => {setShowNewAddressModal(true)}}>
                             change
                         </div>
                     </div>
-                    <div className="flex py-2 border-t justify-between">
-                        <div className="flex flex-col border-dotted  my-auto">
-                            <div className="text-xs text-gray-600">Final Amount</div>
-                            <div className="font-semibold text-xl">
-                                {toINR(getCartTotal())}
+                    {
+                        !cannotDeliver && 
+                        <div className="flex py-2 border-t justify-between">
+                            <div className="flex flex-col border-dotted  my-auto">
+                                <div className="text-xs text-gray-600">Final Amount</div>
+                                <div className="font-semibold text-xl">
+                                    {toINR(getCartTotal())}
+                                </div>
+                            </div>
+                            <div className=" w-1/2 py-2 text-center rounded font-semibold bg-green-700 text-white my-auto">
+                                Proceed to Pay
                             </div>
                         </div>
-                        <div className=" w-1/2 py-2 text-center rounded font-semibold bg-green-700 text-white my-auto">
-                            Proceed to Pay
-                        </div>
-                    </div>
+                    }
+                    
                 </div>
                 :
                 <div className="flex border rounded-lg py-2 justify-center border-green-700 text-green-700 space-x-2" onClick={() => setShowNewAddressModal(true)}>
@@ -101,7 +135,7 @@ export default function CheckoutPage(props: CheckoutProps) {
 
             {
                 showNewAddressModal &&
-                <NewAddress hide={() => setShowNewAddressModal(false)} onSubmit={() => postSubmit()} />
+                <NewAddress hide={() => setShowNewAddressModal(false)} onSubmit={(address, userDetails) => postSubmit(address, userDetails)} />
                 // <div>
                 //     <div className="absolute h-full w-full z-10 top-0 left-0 bg-gray-800 opacity-80" onClick={() => setShowNewAddressModal(false)} />
                 //         <div className="absolute flex flex-col bottom-0 left-0 py-4 w-full bg-white z-10 px-4">
@@ -147,4 +181,29 @@ export default function CheckoutPage(props: CheckoutProps) {
     function getCartTotal() {
         return cart.reduce((acc, curr) => acc + (curr.quantity * curr.cost), 0)
     }
+
+    
+}
+
+async function getQuoteFromDunzo(address: Address) {
+    try {
+        return await axios.post("/api/quote",
+        {
+            "pickup_details": [
+                {
+                    "lat": 12.927923,
+                    "lng": 77.627106,
+                    "reference_id": "pickup-ref"
+                } 
+            ],
+            "drop_details": [{
+                "lat": address.latLong.geoLat,
+                "lng": address.latLong.geoLong,
+                "reference_id": "ref35"
+            }]
+        })
+    } catch(e) {
+        throw Error("Dunzo get quote failed");
+    }
+    
 }
