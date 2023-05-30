@@ -1,6 +1,6 @@
 'use client';
 
-import { CartSummaryItem, CartSummaryItemProps } from "@/app/checkout/page";
+import { CartSummaryItemProps } from "@/app/checkout/page";
 import { toINR } from "@/utils/currency";
 
 type Order = {
@@ -92,13 +92,13 @@ export default function Dashboard() {
             <div className="text-xl p-4 border bg-gray-600 text-white font-semibold">Confirmed Orders</div>
             <div className="flex flex-wrap rounded p-4">
                 {
-                    orders.filter(o => o.status === "CUSTOMER_CONFIRMED").map(o => <ConfirmedOrderComponent {...o} />)
+                    orders.filter(o => o.status === "CUSTOMER_CONFIRMED").map(o => <ConfirmedOrderComponent key={o.orderId} {...o} />)
                 }
             </div>
             <div className="text-xl p-4 border bg-gray-600 text-white font-semibold">Orders in Transit</div>
             <div className="flex flex-wrap rounded p-4">
                 {
-                    orders.filter(o => o.status === "CUSTOMER_CONFIRMED").map(o => <TransitOrderComponent {...o} />)
+                    orders.filter(o => o.status === "CUSTOMER_CONFIRMED").map(o => <TransitOrderComponent key={o.orderId} {...o} />)
                 }
             </div>
             
@@ -117,7 +117,7 @@ function ConfirmedOrderComponent(order: Order) {
                     <div>Quantity</div>
                 </div> */}
                 {
-                    order.cart.map(i => <CartItem {...i} />)
+                    order.cart.map(i => <CartItem key={i.id} {...i} />)
                 }
             </div>
             <div className="flex mt-auto justify-between border-t pt-2">

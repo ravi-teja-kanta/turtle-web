@@ -162,6 +162,22 @@ export default function CheckoutPage(props: CheckoutProps) {
         </div>
     )
 
+    function CartSummaryItem({name, cost, quantity}: CartSummaryItemProps) {
+        return (
+            <div className="flex justify-between">
+                {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-red-700"/></div> */}
+                <div className="w-2/3 text-left my-auto text-sm">{`${name}`}</div>
+                {/* <div className="flex h-fit rounded-md text-center border justify-between">
+                    <div className="bg-green-700 text-white rounded-l" onClick={() => {setQuantity(quantity - 1); props.remove(props.id)}}><MinusIcon className="w-6 h-6 p-1" /></div>
+                    <div className="px-2">{quantity}</div>
+                    <div className="bg-green-700 text-white rounded-r" onClick={() => {setQuantity(quantity + 1); props.add(props.id)}}><PlusIcon className="w-6 h-6 p-1" /></div>
+                </div> */}
+                <div className="w-1/4 text-center text-gray-400 text-sm">{`x ${quantity}`}</div>
+                <div className="w-1/4 text-right">{toINR(cost * quantity)}</div>
+            </div>
+        )
+    }
+
     
 
     function getCartTotal() {
@@ -170,21 +186,7 @@ export default function CheckoutPage(props: CheckoutProps) {
 
     
 }
-export function CartSummaryItem({name, cost, quantity}: CartSummaryItemProps) {
-    return (
-        <div className="flex justify-between">
-            {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-red-700"/></div> */}
-            <div className="w-2/3 text-left my-auto text-sm">{`${name}`}</div>
-            {/* <div className="flex h-fit rounded-md text-center border justify-between">
-                <div className="bg-green-700 text-white rounded-l" onClick={() => {setQuantity(quantity - 1); props.remove(props.id)}}><MinusIcon className="w-6 h-6 p-1" /></div>
-                <div className="px-2">{quantity}</div>
-                <div className="bg-green-700 text-white rounded-r" onClick={() => {setQuantity(quantity + 1); props.add(props.id)}}><PlusIcon className="w-6 h-6 p-1" /></div>
-            </div> */}
-            <div className="w-1/4 text-center text-gray-400 text-sm">{`x ${quantity}`}</div>
-            <div className="w-1/4 text-right">{toINR(cost * quantity)}</div>
-        </div>
-    )
-}
+
 
 async function getQuoteFromDunzo(address: Address) {
     try {
