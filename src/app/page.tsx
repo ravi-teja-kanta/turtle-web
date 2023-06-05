@@ -53,8 +53,8 @@ export default function MenuPage() {
     return (
         <div className="flex flex-col m-4 p-2">
             <div className="flex flex-col text-center space-y-2 px-6">
-                <div className=" text-2xl font-bold text-gray-600 flex flex-wrap justify-center">Behroz Biryani</div>
-                <div className="text-xs gray-400">4.1 Stars on Zomato</div>
+                <div className=" text-2xl font-bold text-gray-600 flex flex-wrap justify-center">Maya Bazaar Restaurant</div>
+                <div className="text-xs gray-400">4.1 Stars on Zomato (1500+ reviews)</div>
             </div>
             <div className="flex flex-col mt-4 space-y-4 mb-10">
                 {
