@@ -2,12 +2,13 @@ import useLocalStorage from "@/utils/useLocalStorage";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Address, LatLong, UserDetails } from "./page";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../../lib/supabase/supabase";
+import { User } from "@/entities/userRepo";
 
 
 type NewAddressProps = {
     hide: () => void,
-    onSubmit: (address: Address, userDetails: UserDetails) => void
+    onSubmit: (user: User) => void
 }
 
 export default function NewAddress(props: NewAddressProps) {
@@ -84,53 +85,55 @@ export default function NewAddress(props: NewAddressProps) {
         } as UserDetails;
 
         addUserDetails(updatedUserDetails, updatedAddress)
-            .then(() => {
-
+            .then((u: User) => {
+                setIsLoading(false);
+                props.onSubmit(u);
             })
             .catch((e) => {
                 throw Error(e.message)
             })
-            .finally(() => {
-                setIsLoading(false);
-                props.onSubmit(updatedAddress, updatedUserDetails);
-            })
     }
 }
 
-export async function getUserDetails(phoneNumber: string) {        
+export async function getUserDetailsFromPhoneNumber(phoneNumber: string) {        
     let { data: users, error } = await supabase
-    .from('users')
+    .from<User>('users')
     .select("*")
     .eq('phoneNumber', phoneNumber)
 
     return users?.pop();
-
 }
+
+
 export async function addUserDetails(userDetails: UserDetails, address: Address) {
-    const oldDetails = await getUserDetails(userDetails.phoneNumber);
+    const oldDetails = await getUserDetailsFromPhoneNumber(userDetails.phoneNumber);
     if (!oldDetails) {
         const { data, error } = 
             await supabase
-                .from('users')
+                .from<User>('users')
                 .insert([
                     { address: address, phoneNumber: userDetails.phoneNumber!!, name: userDetails.nameOfReceiver!! },
                 ])
+                .select()
 
         if (error) {
             console.error(error.message);
             throw Error("Unable to insert user details")
-        } 
+        }
+        
+        return data.pop()!!;
 
     } else {
         const { data, error } = 
                 await supabase
-                        .from('users')
+                        .from<User>('users')
                         .update({ address: address, name: userDetails.nameOfReceiver!! })
                         .eq('phoneNumber', userDetails.phoneNumber)
+                        .select()
         if (error) {
             console.error(error.message);
             throw Error("Unable to update user details")
         } 
-
+        return data.pop()!!;
     }
 }

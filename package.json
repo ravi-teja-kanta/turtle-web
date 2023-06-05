@@ -10,18 +10,20 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
-    "@supabase/supabase-js": "^2.22.0",
+    "@supabase/supabase-js": "^1.35.4",
     "axios": "^1.4.0",
     "next": "13.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.43.9"
+    "react-hook-form": "^7.43.9",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.2.1",
     "@types/node-fetch": "^2.6.4",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "@types/uuid": "^9.0.1",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.41.0",
     "eslint-config-next": "^13.4.3",

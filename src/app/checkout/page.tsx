@@ -6,12 +6,13 @@ import { ArrowLeftIcon, ChevronDownIcon, CircleStackIcon, HomeIcon, HomeModernIc
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import BillDetails from "./BillDetails";
-import NewAddress, { getUserDetails } from "./NewAddress";
+import NewAddress, { getUserDetailsFromPhoneNumber } from "./NewAddress";
 import axios from "axios";
+import { getQuoteFromDunzo } from "@/entities/dunzoManager";
+import { orderRepo } from "@/entities/orderRepo";
+import { User } from "@/entities/userRepo";
+import {v4 as uuid} from "uuid"
 
-type CheckoutProps = {
-    
-}
 
 export type LatLong = {
     geoLat: number,
@@ -25,6 +26,7 @@ export type Address = {
     pincode: string
 }
 export type UserDetails = {
+    id?: string,
     phoneNumber: string,
     nameOfReceiver: string,
 }
@@ -37,19 +39,23 @@ export type CartSummaryItemProps = {
 }
 
 
-export default function CheckoutPage(props: CheckoutProps) {
+export default function CheckoutPage() {
     const [showNewAddressModal, setShowNewAddressModal] = useState(false);
-    const [hasSelectedAddress, setHasSelectedAddress] = useState(false);
     const router = useRouter();
     const [address, setAddress] = useLocalStorage<Address | undefined>("address", undefined);
     const [userDetails, setUserDetails] = useLocalStorage<UserDetails | undefined>("userDetails", undefined);
     const [deliveryETA, setETA] = useState<number>();
     const [cannotDeliver, setCannotDeliver] = useState<string | undefined>(undefined);
     const [cart, setCart] = useLocalStorage<CartSummaryItemProps[]>("cart", []);
-    
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     useEffect(() => {
         if (address) {
-            getQuoteFromDunzo(address)
+            let l: LatLong = {
+                geoLat: 12.948500,
+                geoLong: 77.627586
+            }
+            getQuoteFromDunzo(l)
                 .then((d) => {
                     if (d.data.code) {
                         setCannotDeliver(d.data.message)
@@ -58,23 +64,22 @@ export default function CheckoutPage(props: CheckoutProps) {
                     }
                 })
                 .catch((e) => {
-
+                    setCannotDeliver("Unable to deliver as of now.")
                 })
         }
     }, [address])
 
     
-    function postSubmit(address: Address, userDetails: UserDetails) {
+    function postSubmit(user: User) {
         setShowNewAddressModal(false);
-        setHasSelectedAddress(true);
-        // window.location.reload();
 
-        setAddress(address);
-        setUserDetails(userDetails);
+        setAddress(user.address);
+        setUserDetails({
+            id: user.id,
+            nameOfReceiver: user.name,
+            phoneNumber: user.phoneNumber
+        });
     }
-
-    
-
     
     
     return (
@@ -118,8 +123,11 @@ export default function CheckoutPage(props: CheckoutProps) {
                                     {toINR(getCartTotal())}
                                 </div>
                             </div>
-                            <div className=" w-1/2 py-2 text-center rounded font-semibold bg-green-700 text-white my-auto">
-                                Confirm Order
+                            <div className="flex space-x-2 border w-1/2 p-2 text-white bg-green-700 justify-center rounded" onClick={handleConfirm}>
+                                {
+                                    isLoading ? <div className="pointer-events-none">...loading</div>
+                                    : <div className="font-semibold">Confirm Address</div>
+                                }
                             </div>
                         </div>
                     }
@@ -135,43 +143,33 @@ export default function CheckoutPage(props: CheckoutProps) {
 
             {
                 showNewAddressModal &&
-                <NewAddress hide={() => setShowNewAddressModal(false)} onSubmit={(address, userDetails) => postSubmit(address, userDetails)} />
-                // <div>
-                //     <div className="absolute h-full w-full z-10 top-0 left-0 bg-gray-800 opacity-80" onClick={() => setShowNewAddressModal(false)} />
-                //         <div className="absolute flex flex-col bottom-0 left-0 py-4 w-full bg-white z-10 px-4">
-                //             <div className="flex flex-col space-y-2">
-                //                 <div className="font-semibold">Add New Address</div>
-                //                 <form onSubmit={handleSubmit(postSubmit)} className="flex flex-col space-y-2">
-                //                     <input placeholder="Name of the receiver" {...register("name")} required className="border w-full p-2 p rounded" type={"text"} />
-                //                     <input placeholder="House / Flat / Floor No." {...register("line1")} required className="border w-full p-2 p rounded" type={"text"} />
-                //                     <input placeholder="Apartment / Area / Road" {...register("line2")} required className="border w-full p-2 p rounded" type={"text"} />
-                //                     <div className="flex space-x-2">
-                //                         <input placeholder="Pincode" {...register("pincode")} required className="border w-full p-2 p rounded" type={"number"} />
-                //                         <input placeholder="City" {...register("city")} required className="border w-full p-2 p rounded" type={"text"} />
-                //                     </div>
-                //                     <button type={"submit"}  className="flex space-x-2 border py-2 text-white bg-green-700 justify-center rounded">
-                //                         <div className="font-semibold">Confirm Address</div>
-                //                     </button>
-                //                 </form>
-                //             </div>
-                //         </div>
-                // </div>
+                <NewAddress hide={() => setShowNewAddressModal(false)} onSubmit={(user) => postSubmit(user)} />
             }
             <div className="py-16"></div>
             
         </div>
     )
 
+    async function handleConfirm() {
+        setIsLoading(true);
+        await orderRepo.insert({
+            id: uuid(),
+            userId: userDetails?.id!!,
+            status: "CUSTOMER_CONFIRMED",
+            cart
+        });
+        setCart([])
+        alert("Your order has been confirmed. Mayabazaar will contact you in a few mins.")
+        setIsLoading(false);
+        router.push("/")
+        
+    }
+
     function CartSummaryItem({name, cost, quantity}: CartSummaryItemProps) {
         return (
             <div className="flex justify-between">
-                {/* <div className="mt-1 mr-2"><StopCircleIcon className="w-4 h-4 text-red-700"/></div> */}
-                <div className="w-2/3 text-left my-auto text-sm">{`${name}`}</div>
-                {/* <div className="flex h-fit rounded-md text-center border justify-between">
-                    <div className="bg-green-700 text-white rounded-l" onClick={() => {setQuantity(quantity - 1); props.remove(props.id)}}><MinusIcon className="w-6 h-6 p-1" /></div>
-                    <div className="px-2">{quantity}</div>
-                    <div className="bg-green-700 text-white rounded-r" onClick={() => {setQuantity(quantity + 1); props.add(props.id)}}><PlusIcon className="w-6 h-6 p-1" /></div>
-                </div> */}
+
+                <div className="w-2/3 text-left my-auto text-sm">{`${name}`}</div>                
                 <div className="w-1/4 text-center text-gray-400 text-sm">{`x ${quantity}`}</div>
                 <div className="w-1/4 text-right">{toINR(cost * quantity)}</div>
             </div>
@@ -184,29 +182,5 @@ export default function CheckoutPage(props: CheckoutProps) {
         return cart.reduce((acc, curr) => acc + (curr.quantity * curr.cost), 0)
     }
 
-    
-}
-
-
-async function getQuoteFromDunzo(address: Address) {
-    try {
-        return await axios.post("/api/quote",
-        {
-            "pickup_details": [
-                {
-                    "lat": 12.927923,
-                    "lng": 77.627106,
-                    "reference_id": "pickup-ref"
-                } 
-            ],
-            "drop_details": [{
-                "lat": address.latLong.geoLat,
-                "lng": address.latLong.geoLong,
-                "reference_id": "ref35"
-            }]
-        })
-    } catch(e) {
-        throw Error("Dunzo get quote failed");
-    }
     
 }

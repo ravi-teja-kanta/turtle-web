@@ -14,6 +14,14 @@ const nextConfig = {
           source: '/api/quote',
           destination: '/api/quote.ts',
         },
+        {
+          source: '/api/token',
+          destination: '/api/token.ts',
+        },
+        {
+          source: '/api/createTask',
+          destination: '/api/createTask.ts',
+        }
       ];
     },
 }
