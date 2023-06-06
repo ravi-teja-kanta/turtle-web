@@ -54,8 +54,8 @@ export async function createTask(orderId: string, user: User) {
 						address: {
 							street_address_1: user.address.line1,
 							street_address_2: user.address.line2,
-							lat: 17.462210 || user.address.latLong.geoLat, // 17.462210 || 
-							lng: 78.356850 || user.address.latLong.geoLong, // 78.356850 ||
+							lat: user.address.latLong.geoLat, // 17.462210 || 
+							lng: user.address.latLong.geoLong, // 78.356850 ||
 							city: user.address.city,
 							pincode: user.address.pincode,
 							contact_details: {
