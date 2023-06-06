@@ -61,7 +61,7 @@ export default function CheckoutPage() {
                     if (d.data.code) {
                         setCannotDeliver(d.data.message)
                     } else {
-                        if (d.data.distance > 8) {
+                        if (d.data.distance > 12) {
                             setCannotDeliver("Your address is too far from us to deliver.")
                         } else setETA(d.data.eta.dropoff)
                     }
