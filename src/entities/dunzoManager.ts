@@ -12,15 +12,15 @@ export async function getQuoteFromDunzo(latLong: LatLong) {
         {
             "pickup_details": [
                 {
-                    "lat": 12.927923,
-                    "lng": 77.627106,
-                    "reference_id": "pickup-ref"
+                    "lat": 17.462945136742796,
+                    "lng": 78.3409437605288,
+                    "reference_id": "05888f90-71de-4824-b99a-b4360dc77c49"
                 } 
             ],
             "drop_details": [{
                 "lat": latLong.geoLat,
                 "lng": latLong.geoLong,
-                "reference_id": "ref35"
+                "reference_id": uuid()
             }]
         })
     } catch(e) {
