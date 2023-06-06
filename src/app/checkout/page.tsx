@@ -50,17 +50,20 @@ export default function CheckoutPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
+        const hourOfTheday = (new Date()).getHours();
+        if (hourOfTheday < 12 || hourOfTheday > 23) {
+            setCannotDeliver("Delivery timings are between 12pm - 11pm");
+        }
         if (address) {
-            let l: LatLong = {
-                geoLat: 12.948500,
-                geoLong: 77.627586
-            }
-            getQuoteFromDunzo(l)
+            
+            getQuoteFromDunzo(address.latLong)
                 .then((d) => {
                     if (d.data.code) {
                         setCannotDeliver(d.data.message)
                     } else {
-                        setETA(d.data.eta.dropoff)
+                        if (d.data.distance > 8) {
+                            setCannotDeliver("Your address is too far from us to deliver.")
+                        } else setETA(d.data.eta.dropoff)
                     }
                 })
                 .catch((e) => {
@@ -175,8 +178,6 @@ export default function CheckoutPage() {
             </div>
         )
     }
-
-    
 
     function getCartTotal() {
         return cart.reduce((acc, curr) => acc + (curr.quantity * curr.cost), 0)

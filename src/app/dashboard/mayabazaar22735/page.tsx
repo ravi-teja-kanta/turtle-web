@@ -114,17 +114,25 @@ function TransitOrderComponent(order: Order) {
     }
     return (
         <div className="border p-2 w-1/3 flex flex-col my-2 space-y-4">
+                <div className="font-semibold mx-auto">{order.dunzoMetaData.task_id}</div>
                 
-                <div className="flex space-x-2 text-sm font-semibold">
-                    <div>{order.dunzoMetaData.task_id}</div>
+                <div className="flex flex-col p-2 space-y-2 border-t">
+                    <div className="text-sm">
+                        Order Id: {order.id.split("-")[0]}
+                    </div>
+                    {
+                        order.cart.map(i => <CartItem key={i.id} {...i} />)
+                    }
                 </div>
                                     
-            <div className="text-sm">
-                Order Id: {order.id.split("-")[0]}
-            </div>
+                
             
             
             <div className="flex space-x-4 mt-4 justify-center ">
+                <div className="flex flex-col px-2">
+                    <div className="text-xs my-auto ">Total:</div>
+                    <div className="text-lg font-semibold">{toINR(order.cart.reduce((acc, curr) => acc + (curr.quantity * curr.cost), 0))}</div>
+                </div>
                 <div className="p-1 border rounded text-center text-green-700 border-green-700 hover:cursor-pointer" onClick={async () => await handleButtonClick("ORDER_DELIVERED")}>
                     Delivered
                 </div>
