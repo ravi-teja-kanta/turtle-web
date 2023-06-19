@@ -25,6 +25,14 @@ const nextConfig = {
         {
           source: '/api/createTask',
           destination: '/api/createTask.ts',
+        },
+        {
+          source: '/terms-and-conditions',
+          destination: '/TermsAndConditions.html'
+        },
+        {
+          source: '/privacy-policy',
+          destination: '/PrivacyPolicy.html'
         }
       ];
     },
