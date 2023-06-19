@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import useLocalStorage from "@/utils/useLocalStorage";
 import { CartSummaryItemProps } from "./checkout/page";
 import { MenuItem, MayabazaarMenu } from "@/constants/mayabazaarMenu";
+import Link from "next/link";
 
 
 export default function MenuPage() {
@@ -76,7 +77,11 @@ export default function MenuPage() {
                     </div>
                 </div>
             }
-            
+            <div className='flex mx-auto space-x-2'>
+                <Link href={"/terms-and-conditions"} className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Terms and Conditions</Link>
+                <div>|</div>
+                <Link href={"/privacy-policy"} className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Privacy Policy</Link>
+            </div>
         </div>
     )
 
